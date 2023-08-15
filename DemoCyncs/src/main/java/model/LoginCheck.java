@@ -7,12 +7,17 @@ public class LoginCheck {
 	User_Password_DAO user_Password_DAO = new User_Password_DAO();
 	
 	//User_Passwordテーブルからpasswordなどを取得し、入力値とデータベースの情報を比較しログイン可能か判定する
-	public UserLoginDTO loginCheck(int input_user_id, String input_password) {
+	public UserLoginDTO loginCheck(String input_user_id, String input_password) {
 		//User_Password_DAOからの戻り値を受け取り、メソッド呼び出し元へ戻すインスタンスを生成
 		UserLoginDTO userLoginDTO = new UserLoginDTO();
 		
 		//user_idを元にUser_Passwordテーブルからpassword、invalid_countを受け取る
 		userLoginDTO = user_Password_DAO.getUser_Password(input_user_id);
+		
+		if(userLoginDTO.getUser_id().equals("0000000000")) {
+			userLoginDTO.setLogin_result(false);
+			return userLoginDTO;
+		}
 		
 		//ログイン成功、失敗を格納する
 		boolean loginResult;
@@ -20,7 +25,7 @@ public class LoginCheck {
 		int invalid_count = userLoginDTO.getInvalid_count();
 		
 		//ログイン失敗の回数がアカウントロック回数(6回以上)になっているか、パスワードが入力と一致しているか確認
-		if(invalid_count > 5 && userLoginDTO.getPassword().equals(input_password)) {
+		if(invalid_count < 6 && userLoginDTO.getPassword().equals(input_password)) {
 			loginResult = true;
 			invalid_count = 0;
 		} else {
@@ -37,7 +42,7 @@ public class LoginCheck {
 		return userLoginDTO;
 	}
 	
-	private void invalidUpdate(int user_id, int count) {
+	private void invalidUpdate(String user_id, int count) {
 		user_Password_DAO.setInvalid_Count(user_id, count);
 	}
 }

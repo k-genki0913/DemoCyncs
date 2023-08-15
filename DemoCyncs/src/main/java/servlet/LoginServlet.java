@@ -27,7 +27,7 @@ public class LoginServlet extends HttpServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		/** Session Scopeにログイン情報があるか確認  */
 		HttpSession session = request.getSession();
-		Integer user_id = (Integer)session.getAttribute("user_id");
+		String user_id = (String)session.getAttribute("user_id");
 		
 		/** forward先を格納するためのローカル変数 */
 		String url;
@@ -42,7 +42,7 @@ public class LoginServlet extends HttpServlet {
 		}
 		
 		/** forward先情報を元にforward */
-		RequestDispatcher dispatcher = request.getRequestDispatcher(url);
+		RequestDispatcher dispatcher = request.getRequestDispatcher("WEB-INF/jsp/login.jsp");
 		dispatcher.forward(request, response);
 	}
 	
@@ -61,14 +61,12 @@ public class LoginServlet extends HttpServlet {
 		String inputErrorMsg;
 		boolean bool_user_id = loginInputCheck.inputUserIDCheck(input_user_id);
 		boolean input_password = loginInputCheck.inputPasswordCheck(password);
-		
 		/*
 		 * 入力チェックでuser_id、passwordどちらも正しかった場合にLoginCheckを行う
 		 */
 		if(bool_user_id && input_password) {
-			Integer user_id = Integer.parseInt(input_user_id);
 			LoginCheck loginCheck = new LoginCheck();
-			UserLoginDTO userLoginDTO = loginCheck.loginCheck(user_id, password);
+			UserLoginDTO userLoginDTO = loginCheck.loginCheck(input_user_id, password);
 			if(userLoginDTO.getLogin_result()) {
 				/*
 				 * LoginCheckによってUserLoginDTOがTRUEと判断された場合、forward先をHome画面にし、
@@ -76,14 +74,16 @@ public class LoginServlet extends HttpServlet {
 				 */ 
 				url = "WEB-INF/jsp/home.jsp";
 				HttpSession session = request.getSession();
-				session.setAttribute("user_id", user_id);
+				session.setAttribute("user_id", input_user_id);
 			} else {
 				/*
 				 * UserLoginDTOがFALSEと判断された場合、forward先をlogin画面にし
 				 * inputErrorMsgにエラー内容を追記し、inputErrorMsgをrequest scopeへ格納する
 				 */
 				url = "WEB-INF/jsp/login.jsp";
-				if(userLoginDTO.getInvalid_count() > 5) {
+				if(userLoginDTO.getUser_id().equals("0000000000")) {
+					inputErrorMsg = "ユーザーが存在しません";
+				} else if(userLoginDTO.getInvalid_count() > 5) {
 					inputErrorMsg = "アカウントがロックされました。管理者に問い合わせてください";
 				} else {
 					inputErrorMsg = "パスワードが間違っております";

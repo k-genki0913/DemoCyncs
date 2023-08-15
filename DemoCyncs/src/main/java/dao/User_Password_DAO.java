@@ -12,25 +12,31 @@ public class User_Password_DAO {
 	/*user_idを用いてUser_Passwordテーブルからpassword、invalid_countを取得し
 	 * UserLoginDTOに格納して戻す
 	 */
-	public UserLoginDTO getUser_Password(int user_id) {
+	public UserLoginDTO getUser_Password(String user_id) {
 		Connection con = null;
 		PreparedStatement pstmt = null;
 		
 		UserLoginDTO userLoginDTO = new UserLoginDTO();
 		
-		String sql = "SELECT USER_ID, PASSWORD, INVALID_COUNT FROM USER_PASSWORD WHERE USER_ID = ?";
+		String sql = "SELECT USER_ID, PASSWORD, INVALID_COUNT FROM USER_PASSWORD WHERE USER_ID=?";
 		
 		try {
 			con = BaseDAO.getConnection();
 			pstmt = con.prepareStatement(sql);
 			
-			pstmt.setInt(1, user_id);
+			pstmt.setString(1, user_id);
 			
 			ResultSet rs = pstmt.executeQuery();
 			
-			userLoginDTO.setUser_id(rs.getInt("USER_ID"));
-			userLoginDTO.setPassword(rs.getString("PASSWORD"));
-			userLoginDTO.setInvalid_count(rs.getInt("INVALID_COUNT"));
+			if(rs.next()) {
+				userLoginDTO.setUser_id(rs.getString("USER_ID"));
+				userLoginDTO.setPassword(rs.getString("PASSWORD"));
+				userLoginDTO.setInvalid_count(rs.getInt("INVALID_COUNT"));
+			} else {
+				userLoginDTO.setUser_id("0000000000");
+				userLoginDTO.setPassword("0000000000");
+				userLoginDTO.setInvalid_count(99);
+			}
 		} catch(SQLException e) {
 			System.out.println("User_Passwordテーブルからの情報取得に失敗しました");
 			e.printStackTrace();
@@ -53,7 +59,7 @@ public class User_Password_DAO {
 		return userLoginDTO;
 	}
 	
-	public void setInvalid_Count(int user_id, int count) {
+	public void setInvalid_Count(String user_id, int count) {
 		Connection con = null;
 		PreparedStatement pstmt = null;
 		
@@ -64,7 +70,7 @@ public class User_Password_DAO {
 			pstmt = con.prepareStatement(sql);
 			
 			pstmt.setInt(1, count);
-			pstmt.setInt(2, user_id);
+			pstmt.setString(2, user_id);
 			
 			int result = pstmt.executeUpdate();
 		} catch(SQLException e) {

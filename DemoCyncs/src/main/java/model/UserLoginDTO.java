@@ -7,24 +7,24 @@ package model;
  *
  */
 public class UserLoginDTO {
-	private int user_id;
+	private String user_id;
 	private String password;
 	private int invalid_count;
 	private boolean login_result;
 	
 	public UserLoginDTO() {}
 	
-	public UserLoginDTO(int user_id, String password, int invalid_count) {
+	public UserLoginDTO(String user_id, String password, int invalid_count) {
 		this.user_id = user_id;
 		this.password = password;
 		this.invalid_count = invalid_count;
 	}
 	
-	public void setUser_id(int user_id) {
+	public void setUser_id(String user_id) {
 		this.user_id = user_id;
 	}
 	
-	public int getUser_id() {
+	public String getUser_id() {
 		return this.user_id;
 	}
 	
