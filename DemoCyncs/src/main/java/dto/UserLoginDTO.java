@@ -1,4 +1,4 @@
-package model;
+package dto;
 
 /**
  * ログイン時に必要な情報をまとめたDTO

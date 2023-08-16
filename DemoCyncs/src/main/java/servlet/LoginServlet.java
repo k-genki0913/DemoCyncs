@@ -10,9 +10,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import dto.UserLoginDTO;
 import model.LoginCheck;
 import model.LoginInputCheck;
-import model.UserLoginDTO;
+import model.ValidCheck;
 
 /**
  * Servlet implementation class LoginServlet
@@ -53,28 +54,36 @@ public class LoginServlet extends HttpServlet {
 		String password = request.getParameter("password");
 		String lineCd = System.getProperty("line.separator");
 		String url;
+		String inputErrorMsg;
+		ValidCheck validCheck = new ValidCheck();
 		
 		/*
 		 * 入力値(user_id、password)のチェックをLoginInputCheckを用いて行う
 		 */
 		LoginInputCheck loginInputCheck = new LoginInputCheck();
-		String inputErrorMsg;
 		boolean bool_user_id = loginInputCheck.inputUserIDCheck(input_user_id);
 		boolean input_password = loginInputCheck.inputPasswordCheck(password);
 		/*
-		 * 入力チェックでuser_id、passwordどちらも正しかった場合にLoginCheckを行う
+		 * 入力されたuser_idのis_validが有効(true)か無効(false)か判断し、
+		 * 向こうの場合はinputErrorMsgに文を格納してlogin.jspへ戻す
+		 * 入力チェック(LoginInputCheck)でuser_id、passwordどちらも正しかった場合にLoginCheckを行う
 		 */
-		if(bool_user_id && input_password) {
+		if(!validCheck.getIs_Valid(input_user_id)) {
+			url = "WEB-INF/jsp/login.jsp";
+			inputErrorMsg = "このユーザーは無効となっております。管理者へ問い合わせてください";
+			request.setAttribute("inputErrorMsg", inputErrorMsg);
+		} else if(bool_user_id && input_password) {
 			LoginCheck loginCheck = new LoginCheck();
 			UserLoginDTO userLoginDTO = loginCheck.loginCheck(input_user_id, password);
 			if(userLoginDTO.getLogin_result()) {
 				/*
-				 * LoginCheckによってUserLoginDTOがTRUEと判断された場合、forward先をHome画面にし、
+				 * LoginCheckによってUserLoginDTOがTRUEと判断された場合、Home画面にRedirectし、
 				 * session scopeにuser_idを格納する
 				 */ 
-				url = "WEB-INF/jsp/home.jsp";
 				HttpSession session = request.getSession();
 				session.setAttribute("user_id", input_user_id);
+				response.sendRedirect("home.jsp");
+				return;
 			} else {
 				/*
 				 * UserLoginDTOがFALSEと判断された場合、forward先をlogin画面にし

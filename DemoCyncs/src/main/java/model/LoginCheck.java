@@ -1,6 +1,7 @@
 package model;
 
 import dao.User_Password_DAO;
+import dto.UserLoginDTO;
 
 public class LoginCheck {
 	//User_Passwordテーブルへの接続、SQL実行を行うインスタンスを生成

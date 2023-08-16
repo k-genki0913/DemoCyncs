@@ -5,7 +5,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-import model.UserLoginDTO;
+import dto.UserLoginDTO;
 
 public class User_Password_DAO {
 	
