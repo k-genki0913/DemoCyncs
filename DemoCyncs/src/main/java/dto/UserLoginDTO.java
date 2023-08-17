@@ -1,12 +1,16 @@
 package dto;
 
+import java.io.Serializable;
+
+import org.apache.commons.lang3.builder.EqualsBuilder;
+
 /**
  * ログイン時に必要な情報をまとめたDTO
  * ログイン時の認証やアカウント登録時に利用予定
  * @author k.genki0913
  *
  */
-public class UserLoginDTO {
+public class UserLoginDTO implements Serializable{
 	private String user_id;
 	private String password;
 	private int invalid_count;
@@ -18,6 +22,10 @@ public class UserLoginDTO {
 		this.user_id = user_id;
 		this.password = password;
 		this.invalid_count = invalid_count;
+	}
+	
+	public boolean equals(Object o) {
+		return EqualsBuilder.reflectionEquals(this, o);
 	}
 	
 	public void setUser_id(String user_id) {

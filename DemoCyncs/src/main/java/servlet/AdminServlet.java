@@ -16,7 +16,7 @@ import model.AdminCheck;
  * Servlet implementation class UserResistServlet
  */
 @WebServlet("/UserResistServlet")
-public class UserResistServlet extends HttpServlet {
+public class AdminServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 
 	/**
@@ -33,7 +33,7 @@ public class UserResistServlet extends HttpServlet {
 		boolean adminFlag = adminCheck.getAdminFlag(user_id);
 		
 		if(adminFlag) {
-			url = "WEB-INF/jsp/userRegist.jsp";
+			url = "WEB-INF/jsp/admin.jsp";
 		} else {
 			response.sendRedirect("WEB-INF/jsp/home.jsp");
 			return;

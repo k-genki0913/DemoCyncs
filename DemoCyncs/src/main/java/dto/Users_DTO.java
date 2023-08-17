@@ -1,8 +1,11 @@
 package dto;
 
+import java.io.Serializable;
 import java.sql.Date;
 
-public class Users_DTO {
+import org.apache.commons.lang3.builder.EqualsBuilder;
+
+public class Users_DTO implements Serializable{
 	private String user_id;
 	private String name;
 	private String mail_address;
@@ -22,6 +25,10 @@ public class Users_DTO {
 		this.is_valid = is_valid;
 		this.update_date = update_date;
 		this.update_user = update_user;
+	}
+	
+	public boolean equals(Object o) {
+		return EqualsBuilder.reflectionEquals(this, o);
 	}
 	
 	public String getUser_id() {
